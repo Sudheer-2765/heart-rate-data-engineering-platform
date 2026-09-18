@@ -1,0 +1,33 @@
+# Python Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+
+# Byte-compiled / cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment variables & secrets
+.env
+.env.local
+
+# IDE and Editor Files
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Generated local data and logs
+data/
+*.log
+*.csv
+*.json
+!tests/fixtures/*.json
+
+# Testing and Coverage
+.pytest_cache/
+.coverage
+htmlcov/
