@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 from simulator.config import SimulatorConfig
 from simulator.device_state import DeviceState
 from simulator.anomaly_generator import AnomalyGenerator
+from azure.eventhub import EventHubProducerClient, EventData
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -44,30 +45,72 @@ def main():
     total_events = 0
     
     try:
+        producer_client = None
+        f = None
+        
+        if config.mode == "fabric":
+            if not config.fabric_eventhub_connection_string or not config.fabric_eventhub_name:
+                logger.error("Fabric Event Hub configuration missing in .env")
+                return
+            try:
+                producer_client = EventHubProducerClient.from_connection_string(
+                    conn_str=config.fabric_eventhub_connection_string,
+                    eventhub_name=config.fabric_eventhub_name
+                )
+            except Exception as e:
+                logger.error(f"Failed to create EventHubProducerClient: {type(e).__name__}")
+                return
+                
         if config.mode == "local":
-            with open(config.output_path, 'a') as f:
-                while time.time() - start_time < config.duration_seconds:
-                    loop_start = time.time()
-                    current_dt = datetime.now(timezone.utc)
+            f = open(config.output_path, 'a')
+            
+        while time.time() - start_time < config.duration_seconds:
+            loop_start = time.time()
+            current_dt = datetime.now(timezone.utc)
+            
+            event_data_batch = None
+            if config.mode == "fabric":
+                event_data_batch = producer_client.create_batch()
+            
+            batch_events_count = 0
+            for device in devices:
+                for _ in range(config.events_per_second_per_device):
+                    normal_event = device.next_event(current_dt)
+                    generated_events = anomaly_generator.apply_anomalies(normal_event, current_dt)
                     
-                    for device in devices:
-                        for _ in range(config.events_per_second_per_device):
-                            normal_event = device.next_event(current_dt)
-                            generated_events = anomaly_generator.apply_anomalies(normal_event, current_dt)
-                            
-                            for evt in generated_events:
-                                f.write(json.dumps(evt) + "\n")
-                                total_events += 1
-                    
-                    # Sleep to maintain tick rate roughly at 1 second
-                    elapsed = time.time() - loop_start
-                    if elapsed < 1.0:
-                        time.sleep(1.0 - elapsed)
-        else:
-            logger.info("Fabric mode not yet implemented for Stage 2.")
+                    for evt in generated_events:
+                        if config.mode == "local":
+                            f.write(json.dumps(evt) + "\n")
+                        elif config.mode == "fabric":
+                            try:
+                                event_data_batch.add(EventData(json.dumps(evt)))
+                            except ValueError:
+                                # Batch is full, send and create new
+                                producer_client.send_batch(event_data_batch)
+                                event_data_batch = producer_client.create_batch()
+                                event_data_batch.add(EventData(json.dumps(evt)))
+                            batch_events_count += 1
+                        total_events += 1
+            
+            if config.mode == "fabric" and batch_events_count > 0:
+                try:
+                    producer_client.send_batch(event_data_batch)
+                    logger.info(f"Sent {batch_events_count} events to Fabric Eventstream.")
+                except Exception as e:
+                    logger.error(f"Failed to send batch to Fabric Eventstream: {type(e).__name__}")
+            
+            # Sleep to maintain tick rate roughly at 1 second
+            elapsed = time.time() - loop_start
+            if elapsed < 1.0:
+                time.sleep(1.0 - elapsed)
             
     except KeyboardInterrupt:
         logger.info("Simulation interrupted by user")
+    finally:
+        if 'f' in locals() and f:
+            f.close()
+        if 'producer_client' in locals() and producer_client:
+            producer_client.close()
         
     logger.info(f"Simulation complete. Generated {total_events} events.")
     logger.info(f"Anomaly counts: {anomaly_generator.anomaly_counts}")

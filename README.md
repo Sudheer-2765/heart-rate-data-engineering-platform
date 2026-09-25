@@ -121,7 +121,7 @@ wearable-iot-platform/
 
 ---
 
-## 6. Running the Simulator Locally
+## 6. Running the Simulator
 
 ### Setup Environment
 ```bash
@@ -134,9 +134,29 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### Run the Simulator
+### Configuration
+1. Copy `.env.example` to `.env`
+```bash
+cp .env.example .env
+```
+2. For Fabric Mode, update `.env` with your Microsoft Fabric Eventstream details:
+```env
+FABRIC_EVENTHUB_CONNECTION_STRING=Endpoint=sb://...
+FABRIC_EVENTHUB_NAME=your_eventhub_name
+```
+> [!WARNING]
+> Never commit your `.env` file to version control. It contains sensitive credentials. Ensure it remains in `.gitignore`.
+
+### Run in Local Mode
+Local mode generates events and appends them as JSON Lines to `data/telemetry.jsonl`.
 ```bash
 python -m simulator.producer --mode local --duration 30 --devices 10 --eps 1
+```
+
+### Run in Fabric Mode
+Fabric mode sends events directly to Microsoft Fabric Eventstream using the Azure Event Hubs SDK.
+```bash
+python -m simulator.producer --mode fabric --duration 30 --devices 10 --eps 1
 ```
 
 ### Example Generated Event
@@ -148,6 +168,6 @@ python -m simulator.producer --mode local --duration 30 --devices 10 --eps 1
   "heart_rate_bpm": 72,
   "spo2": 98.5,
   "battery_level": 84,
-  "ingestion_timestamp": null
+  "ingestion_timestamp": "2026-09-18T15:20:05.123Z"
 }
 ```

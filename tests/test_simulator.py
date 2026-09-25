@@ -99,5 +99,46 @@ def test_anomaly_generator_invalid_value():
     if not (30 <= evt["heart_rate_bpm"] <= 240): invalid_count += 1
     if not (70.0 <= evt["spo2"] <= 100.0): invalid_count += 1
     if not (0 <= evt["battery_level"] <= 100): invalid_count += 1
-        
+    
     assert invalid_count == 1
+
+def test_simulator_config_fabric_mode():
+    config = SimulatorConfig(
+        fabric_eventhub_connection_string="Endpoint=sb://test.servicebus.windows.net/;SharedAccessKeyName=KeyName;SharedAccessKey=Key;EntityPath=hub",
+        fabric_eventhub_name="hub",
+        mode="fabric"
+    )
+    assert config.mode == "fabric"
+    assert config.fabric_eventhub_connection_string.startswith("Endpoint=")
+    assert config.fabric_eventhub_name == "hub"
+
+from unittest.mock import patch, MagicMock
+
+@patch('simulator.producer.EventHubProducerClient')
+def test_producer_fabric_mode(mock_eventhub):
+    mock_client_instance = MagicMock()
+    mock_eventhub.from_connection_string.return_value = mock_client_instance
+    
+    mock_batch = MagicMock()
+    mock_client_instance.create_batch.return_value = mock_batch
+    
+    import simulator.producer
+    from simulator.config import SimulatorConfig
+    import time
+    
+    # Run producer for 1 second in fabric mode
+    import sys
+    test_args = ["producer.py", "--mode", "fabric", "--duration", "1", "--devices", "2", "--eps", "1"]
+    
+    with patch.object(sys, 'argv', test_args):
+        # We also need to mock environment variables so the config check passes
+        with patch.dict('os.environ', {
+            'FABRIC_EVENTHUB_CONNECTION_STRING': 'fake_conn_str',
+            'FABRIC_EVENTHUB_NAME': 'fake_hub'
+        }):
+            simulator.producer.main()
+            
+    # Verify client was created and send_batch was called
+    mock_eventhub.from_connection_string.assert_called_once()
+    assert mock_client_instance.send_batch.called
+    assert mock_client_instance.close.called

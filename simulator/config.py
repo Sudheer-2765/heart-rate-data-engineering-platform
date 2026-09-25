@@ -1,4 +1,8 @@
-from dataclasses import dataclass
+import os
+from dataclasses import dataclass, field
+from dotenv import load_dotenv
+
+load_dotenv()
 
 @dataclass
 class SimulatorConfig:
@@ -16,3 +20,7 @@ class SimulatorConfig:
     # Output
     output_path: str = "data/telemetry.jsonl"
     mode: str = "local"
+    
+    # Fabric Configuration
+    fabric_eventhub_connection_string: str = field(default_factory=lambda: os.getenv("FABRIC_EVENTHUB_CONNECTION_STRING", ""))
+    fabric_eventhub_name: str = field(default_factory=lambda: os.getenv("FABRIC_EVENTHUB_NAME", ""))
