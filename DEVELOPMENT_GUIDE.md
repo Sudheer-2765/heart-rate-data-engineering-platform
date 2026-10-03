@@ -1,6 +1,6 @@
-# Development Guide: Wearable Health IoT Platform
+# Development Guide: Real-Time Heart Rate Data Engineering & Analytics Platform
 
-A step-by-step roadmap for building the Wearable Health IoT Telemetry & Monitoring Platform on Microsoft Fabric. This guide breaks the project down into 13 beginner-friendly stages.
+A step-by-step roadmap for building the Real-Time Heart Rate Data Engineering & Analytics Platform on Microsoft Fabric. This guide breaks the project down into 13 beginner-friendly stages.
 
 ---
 

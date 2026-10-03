@@ -1,6 +1,6 @@
-# System Architecture: Wearable Health IoT Platform
+# System Architecture: Real-Time Heart Rate Data Engineering & Analytics Platform
 
-This document describes the architectural design, data flow, and component responsibilities of the Wearable Health IoT Telemetry & Monitoring Platform built on Microsoft Fabric.
+This document describes the architectural design, data flow, and component responsibilities of the Real-Time Heart Rate Data Engineering & Analytics Platform built on Microsoft Fabric.
 
 ---
 

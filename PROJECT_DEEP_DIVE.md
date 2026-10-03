@@ -1,8 +1,9 @@
 # Project Deep Dive
-## Wearable Health IoT Telemetry & Monitoring Platform
+
+## Real-Time Heart Rate Data Engineering & Analytics Platform
 
 This document is the technical and interview preparation guide for the
-Wearable Health IoT Telemetry & Monitoring Platform.
+Real-Time Heart Rate Data Engineering & Analytics Platform.
 
 It explains not only what was built, but also:
 
@@ -925,7 +926,7 @@ The simulator demonstrates several important engineering concepts:
 - Controlled test-data generation
 
 The Python simulator therefore acts as the controlled source system for the
-entire Wearable Health IoT Telemetry & Monitoring Platform.
+entire Real-Time Heart Rate Data Engineering & Analytics Platform.
 ## 5.1 Purpose of the Streaming Layer
 
 After generating telemetry in Python, the next requirement was to move the
@@ -6697,7 +6698,7 @@ Business / Operational Insights
 ```
 
 This completes the main technical implementation and reporting story of the
-Wearable Health IoT Telemetry & Monitoring Platform.
+Real-Time Heart Rate Data Engineering & Analytics Platform.
 # 11. Testing, Validation, and Reliability
 
 ## 11.1 Why Testing Is Important
@@ -11736,7 +11737,7 @@ requirements increase.
 ## 15.1 Project Name
 
 ```text
-Wearable Health IoT Telemetry & Monitoring Platform
+Real-Time Heart Rate Data Engineering & Analytics Platform
 ```
 
 This is an end-to-end data engineering project built using Microsoft Fabric,
@@ -12629,7 +12630,7 @@ A strong answer is:
 
 Use this version for a Data Engineer resume:
 
-**Wearable Health IoT Telemetry & Monitoring Platform | Python, Microsoft Fabric, PySpark, Power BI**
+**Real-Time Heart Rate Data Engineering & Analytics Platform | Python, Microsoft Fabric, PySpark, Power BI**
 
 > Built an end-to-end IoT data engineering pipeline that simulated wearable
 > telemetry and ingested streaming events through Microsoft Fabric Eventstream
@@ -12986,7 +12987,7 @@ This is the complete technical story of the project.
 
 # 15.64 Final Project Summary
 
-The Wearable Health IoT Telemetry & Monitoring Platform demonstrates how an
+The Real-Time Heart Rate Data Engineering & Analytics Platform demonstrates how an
 engineer can build a complete data pipeline from source simulation to
 business-facing analytics.
 

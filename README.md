@@ -1,4 +1,6 @@
-# Wearable Health IoT Telemetry & Monitoring Platform
+# Real-Time Heart Rate Data Engineering & Analytics Platform
+
+*Microsoft Fabric | Eventstream | PySpark | Lakehouse | Data Pipeline | Direct Lake | Power BI*
 
 A hands-on **Data Engineering project built on Microsoft Fabric** to ingest,
 validate, transform, and visualize synthetic wearable IoT telemetry.
