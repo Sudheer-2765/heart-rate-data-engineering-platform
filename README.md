@@ -175,7 +175,7 @@ The main objectives are:
 ## 5. Repository Structure
 
 ```text
-wearable-iot-platform/
+heart-rate-data-engineering-platform/
 │
 ├── simulator/
 │   ├── __init__.py
